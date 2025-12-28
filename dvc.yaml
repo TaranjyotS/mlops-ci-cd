@@ -1,0 +1,30 @@
+stages:
+  generate:
+    cmd: python -m mlops_ci_cd.data.generate --out data/raw/train.csv --rows 1000 --seed 42
+    deps:
+      - src/mlops_ci_cd/data/generate.py
+    outs:
+      - data/raw/train.csv
+
+  validate:
+    cmd: python -m mlops_ci_cd.data.validate --data data/raw/train.csv
+    deps:
+      - src/mlops_ci_cd/data/validate.py
+      - data/raw/train.csv
+    outs:
+      - reports/ge_validation.json
+
+  train:
+    cmd: python -m mlops_ci_cd.model.train --data data/raw/train.csv --model-out models/model.joblib --metrics-out reports/metrics.json
+    deps:
+      - src/mlops_ci_cd/model/train.py
+      - data/raw/train.csv
+    outs:
+      - models/model.joblib
+      - reports/metrics.json
+
+  register:
+    cmd: python -m mlops_ci_cd.model.registry --name random_forest_model
+    deps:
+      - src/mlops_ci_cd/model/registry.py
+      - models/model.joblib
