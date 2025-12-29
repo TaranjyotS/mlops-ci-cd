@@ -6,8 +6,8 @@ stages:
     deps:
     - path: src/mlops_ci_cd/data/generate.py
       hash: md5
-      md5: 91a2d79aef9bcab228f0f06cf9f7b6da
-      size: 1465
+      md5: 3d1f73694fa47f05b5243a48606223b8
+      size: 1605
     outs:
     - path: data/raw/train.csv
       hash: md5
@@ -22,12 +22,12 @@ stages:
       size: 39549
     - path: src/mlops_ci_cd/data/validate.py
       hash: md5
-      md5: 1ffbdd995f5f580e5521246f4fc16ae8
-      size: 3129
+      md5: 32dbbf8231cb62ba0af40134fa5686ec
+      size: 3214
     outs:
     - path: reports/ge_validation.json
       hash: md5
-      md5: cfa16ec2da2ee2e21f5dbdfa165a06a5
+      md5: 0506532462827fd6c963c2d4e71dc7a9
       size: 2080
   train:
     cmd: python -m mlops_ci_cd.model.train --data data/raw/train.csv --model-out models/model.joblib
@@ -39,8 +39,8 @@ stages:
       size: 39549
     - path: src/mlops_ci_cd/model/train.py
       hash: md5
-      md5: 470c645941769ba884d14c1bcb09f927
-      size: 2304
+      md5: 7d4f202d8f4759178327c51335573f8f
+      size: 2641
     outs:
     - path: models/model.joblib
       hash: md5
@@ -59,5 +59,5 @@ stages:
       size: 3984473
     - path: src/mlops_ci_cd/model/registry.py
       hash: md5
-      md5: a75f74ce6e0f324a4a39e3c1e8ebc5c9
-      size: 1791
+      md5: 97e0bc7eedc1c61b59331f83c70616e4
+      size: 1865
