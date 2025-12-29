@@ -12,5 +12,5 @@ def test_end_to_end_tmp(tmp_path):
     validate_csv(str(data_path))
     train_model(str(data_path), str(model_path), str(metrics_path), seed=1)
 
-    assert model_path.exists()
-    assert metrics_path.exists()
+    assert model_path.exists(), f"Expected model file not found: {model_path}"
+    assert metrics_path.exists(), f"Expected metrics file not found: {metrics_path}"

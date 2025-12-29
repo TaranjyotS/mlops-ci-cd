@@ -25,7 +25,7 @@ jobs:
         run: ruff check .
 
       - name: Security (bandit)
-        run: bandit -r src -q
+        run: bandit -r src/mlops_ci_cd -q
 
       - name: Tests
         run: pytest --cov=mlops_ci_cd --cov-report=term-missing
