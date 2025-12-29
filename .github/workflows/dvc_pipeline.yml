@@ -23,7 +23,7 @@ jobs:
 
       - name: Run DVC pipeline
         run: |
-          dvc init --no-scm
+          dvc --version
           dvc repro
 
       - name: Upload reports

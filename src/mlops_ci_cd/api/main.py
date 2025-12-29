@@ -18,7 +18,11 @@ app = FastAPI(title="MLOps CI/CD Inference API", version="1.0.0")
 
 
 def _load_model():
-    """Load model from MLflow (if configured) or local artifact."""
+    """Load model from MLflow (if configured) or local artifact.
+
+    Returns:
+        The loaded model.
+    """
     mlflow_uri = os.getenv("MODEL_URI", "").strip()
     tracking_uri = os.getenv("MLFLOW_TRACKING_URI", "").strip()
 

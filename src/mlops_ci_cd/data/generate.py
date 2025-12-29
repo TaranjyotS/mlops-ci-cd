@@ -9,9 +9,15 @@ import pandas as pd
 
 def generate_dataset(out_path: str, n_rows: int = 1000, seed: int = 42) -> Path:
     """Generate a simple synthetic binary classification dataset.
-
     This is intentionally lightweight so the pipeline is runnable anywhere.
-    Replace with your real data ingestion later (S3, warehouse, etc.).
+
+    Parameters:
+        out_path: Output CSV file path.
+        n_rows: Number of rows to generate.
+        seed: Random seed for reproducibility.
+
+    Returns:
+        Path: The path to the generated CSV file.
     """
     rng = np.random.default_rng(seed)
 

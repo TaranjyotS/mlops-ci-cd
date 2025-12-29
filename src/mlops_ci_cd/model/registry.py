@@ -11,9 +11,11 @@ except Exception:  # pragma: no cover
 
 def register_latest_run(model_name: str) -> None:
     """Register the most recent run's model artifact in MLflow Model Registry.
+    This requires an MLflow tracking server with registry support. In local mode (no server),
+    this will print instructions and exit cleanly.
 
-    This requires an MLflow tracking server with registry support.
-    In local mode (no server), this will print instructions and exit cleanly.
+    Parameters:
+        model_name: The name to register the model under.
     """
     if mlflow is None:
         print("⚠️ mlflow not installed; skipping registry step.")

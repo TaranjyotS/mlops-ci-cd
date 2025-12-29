@@ -18,6 +18,14 @@ except Exception:  # pragma: no cover
 
 
 def train_model(data_path: str, model_out: str, metrics_out: str, seed: int = 42) -> None:
+    """Train a RandomForestClassifier on the provided dataset and save the model and metrics.
+    
+    Parameters:
+        data_path: Path to the training CSV file.
+        model_out: Path to save the trained model artifact.
+        metrics_out: Path to save the training metrics JSON file.
+        seed: Random seed for reproducibility.
+    """
     df = pd.read_csv(data_path)
     X = df.drop(columns=["target"])
     y = df["target"]
@@ -42,7 +50,7 @@ def train_model(data_path: str, model_out: str, metrics_out: str, seed: int = 42
     Path(metrics_out).parent.mkdir(parents=True, exist_ok=True)
     Path(metrics_out).write_text(json.dumps({"accuracy": acc}, indent=2), encoding="utf-8")
 
-    # Optional MLflow logging (works with local file store too)
+    # MLflow logging (works with local file store too)
     tracking_uri = os.getenv("MLFLOW_TRACKING_URI", "").strip()
     if mlflow is not None:
         if tracking_uri:

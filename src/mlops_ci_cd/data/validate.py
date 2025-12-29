@@ -22,7 +22,10 @@ SUITE_NAME = "train_suite"
 def _ephemeral_context():
     """
     Create a Great Expectations EphemeralDataContext with in-memory stores.
-    This avoids loading any YAML config and works reliably in CI + Windows.
+    This avoids loading any YAML config.
+
+    Returns:
+        EphemeralDataContext: An ephemeral Great Expectations data context.
     """
     from great_expectations.data_context import EphemeralDataContext
     from great_expectations.data_context.types.base import (
@@ -32,7 +35,7 @@ def _ephemeral_context():
 
     config = DataContextConfig(
         config_version=3.0,
-        datasources={},  # we'll add datasources in code
+        datasources={},
         store_backend_defaults=InMemoryStoreBackendDefaults(),
         expectations_store_name="expectations_store",
         validations_store_name="validations_store",
@@ -42,8 +45,12 @@ def _ephemeral_context():
 
 
 def validate_csv(csv_path: str) -> None:
-    import pandas as pd
-    from pathlib import Path
+    """
+    Docstring for validate_csv
+    
+    Parameters:
+        csv_path: Path to the CSV file to validate.
+    """
 
     df = pd.read_csv(csv_path)
 
@@ -66,7 +73,7 @@ def validate_csv(csv_path: str) -> None:
         expectation_suite_name=suite_name,
     )
 
-    # ✅ Fluent expectations API (stable in GE 0.18.x)
+    # Fluent expectations API (stable in GE 0.18.x)
     validator.expect_table_row_count_to_be_between(min_value=50, max_value=None)
 
     first_col = df.columns[0] if len(df.columns) > 0 else None
