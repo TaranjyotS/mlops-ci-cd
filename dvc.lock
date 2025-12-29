@@ -1,0 +1,63 @@
+schema: '2.0'
+stages:
+  generate:
+    cmd: python -m mlops_ci_cd.data.generate --out data/raw/train.csv --rows 1000
+      --seed 42
+    deps:
+    - path: src/mlops_ci_cd/data/generate.py
+      hash: md5
+      md5: 91a2d79aef9bcab228f0f06cf9f7b6da
+      size: 1465
+    outs:
+    - path: data/raw/train.csv
+      hash: md5
+      md5: 3ac6ed1514c823bea8340b30e0c440c7
+      size: 39549
+  validate:
+    cmd: python -m mlops_ci_cd.data.validate --data data/raw/train.csv
+    deps:
+    - path: data/raw/train.csv
+      hash: md5
+      md5: 3ac6ed1514c823bea8340b30e0c440c7
+      size: 39549
+    - path: src/mlops_ci_cd/data/validate.py
+      hash: md5
+      md5: 1ffbdd995f5f580e5521246f4fc16ae8
+      size: 3129
+    outs:
+    - path: reports/ge_validation.json
+      hash: md5
+      md5: cfa16ec2da2ee2e21f5dbdfa165a06a5
+      size: 2080
+  train:
+    cmd: python -m mlops_ci_cd.model.train --data data/raw/train.csv --model-out models/model.joblib
+      --metrics-out reports/metrics.json
+    deps:
+    - path: data/raw/train.csv
+      hash: md5
+      md5: 3ac6ed1514c823bea8340b30e0c440c7
+      size: 39549
+    - path: src/mlops_ci_cd/model/train.py
+      hash: md5
+      md5: 470c645941769ba884d14c1bcb09f927
+      size: 2304
+    outs:
+    - path: models/model.joblib
+      hash: md5
+      md5: 8b6dc26b8dc2176e683e0c5f2f9ffbde
+      size: 3984473
+    - path: reports/metrics.json
+      hash: md5
+      md5: 5204445715991a0d9da6a7ec5b64cb05
+      size: 25
+  register:
+    cmd: python -m mlops_ci_cd.model.registry --name random_forest_model
+    deps:
+    - path: models/model.joblib
+      hash: md5
+      md5: 8b6dc26b8dc2176e683e0c5f2f9ffbde
+      size: 3984473
+    - path: src/mlops_ci_cd/model/registry.py
+      hash: md5
+      md5: a75f74ce6e0f324a4a39e3c1e8ebc5c9
+      size: 1791
