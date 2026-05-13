@@ -14,7 +14,7 @@ stages:
       md5: 3ac6ed1514c823bea8340b30e0c440c7
       size: 39549
   validate:
-    cmd: python -m mlops_ci_cd.data.validate --data data/raw/train.csv
+    cmd: python -m mlops_ci_cd.data.validate --data data/raw/train.csv --report reports/ge_validation.json
     deps:
     - path: data/raw/train.csv
       hash: md5
@@ -22,13 +22,13 @@ stages:
       size: 39549
     - path: src/mlops_ci_cd/data/validate.py
       hash: md5
-      md5: 32dbbf8231cb62ba0af40134fa5686ec
-      size: 3214
+      md5: d967f28f002588ff8bb9256a9287f6f9
+      size: 2256
     outs:
     - path: reports/ge_validation.json
       hash: md5
-      md5: 0506532462827fd6c963c2d4e71dc7a9
-      size: 2080
+      md5: 9d78d6b8400994d5387e350e0dacae2c
+      size: 795
   train:
     cmd: python -m mlops_ci_cd.model.train --data data/raw/train.csv --model-out models/model.joblib
       --metrics-out reports/metrics.json
@@ -39,24 +39,28 @@ stages:
       size: 39549
     - path: src/mlops_ci_cd/model/train.py
       hash: md5
-      md5: 7d4f202d8f4759178327c51335573f8f
-      size: 2641
+      md5: cb63b99e3d4b5353e5a832e48744e04b
+      size: 3776
     outs:
     - path: models/model.joblib
       hash: md5
-      md5: 8b6dc26b8dc2176e683e0c5f2f9ffbde
-      size: 3984473
+      md5: 9006b0ac849e880e09cad92ba472aae8
+      size: 2333897
     - path: reports/metrics.json
       hash: md5
-      md5: 5204445715991a0d9da6a7ec5b64cb05
-      size: 25
+      md5: ec8e012e5c911782e4c586c233fd437e
+      size: 157
+    - path: reports/model_schema.json
+      hash: md5
+      md5: e8aab28fdf6784bc7d2b00fde42b68b3
+      size: 204
   register:
     cmd: python -m mlops_ci_cd.model.registry --name random_forest_model
     deps:
     - path: models/model.joblib
       hash: md5
-      md5: 8b6dc26b8dc2176e683e0c5f2f9ffbde
-      size: 3984473
+      md5: 9006b0ac849e880e09cad92ba472aae8
+      size: 2333897
     - path: src/mlops_ci_cd/model/registry.py
       hash: md5
       md5: 97e0bc7eedc1c61b59331f83c70616e4

@@ -7,7 +7,7 @@ stages:
       - data/raw/train.csv
 
   validate:
-    cmd: python -m mlops_ci_cd.data.validate --data data/raw/train.csv
+    cmd: python -m mlops_ci_cd.data.validate --data data/raw/train.csv --report reports/ge_validation.json
     deps:
       - src/mlops_ci_cd/data/validate.py
       - data/raw/train.csv
@@ -21,7 +21,10 @@ stages:
       - data/raw/train.csv
     outs:
       - models/model.joblib
-      - reports/metrics.json
+      - reports/model_schema.json
+    metrics:
+      - reports/metrics.json:
+          cache: false
 
   register:
     cmd: python -m mlops_ci_cd.model.registry --name random_forest_model

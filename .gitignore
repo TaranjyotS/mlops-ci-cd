@@ -1,29 +1,31 @@
 # Python
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
 *.egg-info/
-build/
-dist/
-
-# Virtual env
-.venv/
-venv/
-
-# MLflow
-mlruns/
-
-# DVC
-.dvc/cache/
-
-# IDE / OS
-.vscode/
-.idea/
-.DS_Store
-Thumbs.db
-
-# Pytest
 .pytest_cache/
+.ruff_cache/
 .coverage
 htmlcov/
+
+# Environments
+.venv/
+venv/
+.env
+.env.*
+
+# Local MLOps artifacts
+mlruns/
+.dvc/tmp/
+*.log
+mlflow.db
+
+# OS / IDE
+.DS_Store
+.vscode/
+.idea/
+
+# Generated reports
+reports/*.json
+reports/*.html
+!reports/sample_metrics.json
+!reports/.gitkeep

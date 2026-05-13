@@ -1,2 +1,4 @@
 /metrics.json
 /ge_validation.json
+/model_schema.json
+/drift_report.json

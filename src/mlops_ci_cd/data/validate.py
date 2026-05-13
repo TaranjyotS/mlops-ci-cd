@@ -6,104 +6,50 @@ from pathlib import Path
 
 import pandas as pd
 
-try:
-    import great_expectations as gx
-    from great_expectations.data_context import EphemeralDataContext
-    from great_expectations.data_context.types.base import DataContextConfig
-except Exception:  # pragma: no cover
-    gx = None
-    EphemeralDataContext = None
-    DataContextConfig = None
+REQUIRED_COLUMNS = {"feature1", "feature2", "target"}
+REPORT_PATH = Path("reports/ge_validation.json")
 
 
-SUITE_NAME = "train_suite"
+def _write_report(success: bool, checks: list[dict[str, object]], output_path: Path = REPORT_PATH) -> None:
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(json.dumps({"success": success, "checks": checks}, indent=2), encoding="utf-8")
 
 
-def _ephemeral_context():
-    """
-    Create a Great Expectations EphemeralDataContext with in-memory stores.
-    This avoids loading any YAML config.
-
-    Returns:
-        EphemeralDataContext: An ephemeral Great Expectations data context.
-    """
-    from great_expectations.data_context import EphemeralDataContext
-    from great_expectations.data_context.types.base import (
-        DataContextConfig,
-        InMemoryStoreBackendDefaults,
-    )
-
-    config = DataContextConfig(
-        config_version=3.0,
-        datasources={},
-        store_backend_defaults=InMemoryStoreBackendDefaults(),
-        expectations_store_name="expectations_store",
-        validations_store_name="validations_store",
-        checkpoint_store_name="checkpoint_store",
-    )
-    return EphemeralDataContext(project_config=config)
-
-
-def validate_csv(csv_path: str) -> None:
-    """
-    Docstring for validate_csv
-    
-    Parameters:
-        csv_path: Path to the CSV file to validate.
-    """
-
+def validate_csv(csv_path: str, report_path: str | Path = REPORT_PATH) -> bool:
+    """Validate core data quality expectations for the training dataset."""
     df = pd.read_csv(csv_path)
+    checks: list[dict[str, object]] = []
 
-    context = _ephemeral_context()
+    def add_check(name: str, success: bool, details: object = None) -> None:
+        checks.append({"name": name, "success": success, "details": details})
 
-    # Add a pandas datasource + dataframe asset
-    datasource = context.sources.add_pandas(name="pandas_ds")
-    asset = datasource.add_dataframe_asset(name="train_df")
+    add_check("minimum_row_count", len(df) >= 50, {"rows": len(df), "minimum": 50})
+    missing_columns = sorted(REQUIRED_COLUMNS - set(df.columns))
+    add_check("required_columns", not missing_columns, {"missing": missing_columns})
 
-    batch_request = asset.build_batch_request(dataframe=df)
+    if not missing_columns:
+        add_check("no_nulls", not df[list(REQUIRED_COLUMNS)].isna().any().any())
+        add_check("feature1_range", bool(df["feature1"].between(0, 10).all()))
+        add_check("feature2_range", bool(df["feature2"].between(0, 10).all()))
+        add_check("target_binary", set(df["target"].dropna().unique()).issubset({0, 1}))
+        add_check("target_has_two_classes", df["target"].nunique() == 2)
 
-    # Create or load suite
-    suite_name = "train_suite"
-    existing = {s.name for s in context.list_expectation_suites()}
-    if suite_name not in existing:
-        context.add_expectation_suite(expectation_suite_name=suite_name)
+    success = all(bool(check["success"]) for check in checks)
+    _write_report(success, checks, Path(report_path))
+    if not success:
+        failed = [check["name"] for check in checks if not check["success"]]
+        raise SystemExit(f"Data validation failed: {failed}. See {report_path}")
 
-    validator = context.get_validator(
-        batch_request=batch_request,
-        expectation_suite_name=suite_name,
-    )
-
-    # Fluent expectations API (stable in GE 0.18.x)
-    validator.expect_table_row_count_to_be_between(min_value=50, max_value=None)
-
-    first_col = df.columns[0] if len(df.columns) > 0 else None
-    if first_col is None:
-        raise SystemExit("Validation failed: dataset has zero columns.")
-
-    validator.expect_column_values_to_not_be_null(column=first_col)
-
-    # Save suite + validate
-    validator.save_expectation_suite(discard_failed_expectations=False)
-    results = validator.validate()
-
-    # Save report
-    Path("reports").mkdir(exist_ok=True)
-    Path("reports/ge_validation.json").write_text(
-        json.dumps(results.to_json_dict(), indent=2),
-        encoding="utf-8",
-    )
-
-    if not results.success:
-        raise SystemExit("Great Expectations validation failed. See reports/ge_validation.json")
-
-    print("✅ Great Expectations validation passed.")
+    print("Data validation passed.")
+    return True
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--data", default="data/raw/train.csv", help="Path to training CSV")
+    parser.add_argument("--report", default=str(REPORT_PATH), help="Path to validation report JSON")
     args = parser.parse_args()
-    validate_csv(args.data)
+    validate_csv(args.data, args.report)
 
 
 if __name__ == "__main__":

@@ -22,3 +22,6 @@ ruff==0.8.4
 bandit==1.7.10
 
 python-dotenv==1.0.1
+
+pydantic-settings==2.6.1
+httpx==0.27.2
