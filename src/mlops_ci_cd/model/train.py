@@ -14,8 +14,9 @@ from sklearn.model_selection import train_test_split
 try:
     import mlflow
     from mlflow.models.signature import infer_signature
-except Exception:  # pragma: no cover
+except ImportError:  # pragma: no cover
     mlflow = None
+    infer_signature = None
 
 FEATURE_COLUMNS = ["feature1", "feature2"]
 TARGET_COLUMN = "target"

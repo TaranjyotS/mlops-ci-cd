@@ -5,7 +5,7 @@ import os
 
 try:
     import mlflow
-except Exception:  # pragma: no cover
+except ImportError:  # pragma: no cover
     mlflow = None
 
 

@@ -39,8 +39,8 @@ stages:
       size: 39549
     - path: src/mlops_ci_cd/model/train.py
       hash: md5
-      md5: cb63b99e3d4b5353e5a832e48744e04b
-      size: 3776
+      md5: 250972aac94a489ed1b765dc79022c2a
+      size: 3805
     outs:
     - path: models/model.joblib
       hash: md5
@@ -63,5 +63,5 @@ stages:
       size: 2333897
     - path: src/mlops_ci_cd/model/registry.py
       hash: md5
-      md5: 97e0bc7eedc1c61b59331f83c70616e4
-      size: 1865
+      md5: c395b26cf4d6fb696387867a50385b3e
+      size: 1867
