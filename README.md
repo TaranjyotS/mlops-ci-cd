@@ -709,7 +709,7 @@ uvicorn mlops_ci_cd.api.main:app --reload
 
 ## 📄 License
 
-MIT License
+This project is licensed under the [MIT License](LICENSE).
 
 ---
 
